@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>水果挑選器（選擇困難的幫手）（自己製作）</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    .container {
+      text-align: center;
+    }
+    .machine {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 300px;
+      margin: 20px auto;
+      border-radius: 10px;
+      background-color: #ffe9e9;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+    }
+    .slot {
+      flex: 1 0 100px;
+      margin: 5px;
+      border: 2px solid #ff8080;
+      border-radius: 5px;
+      padding: 5px;
+      background-color: #fff;
+    }
+    .slot img {
+      max-width: 100%;
+      display: block;
+      border-radius: 5px;
+    }
+    #spinBtn {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #ff6b6b;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 20px;
+      transition: background-color 0.3s;
+    }
+    #spinBtn:hover {
+      background-color: #ff4040;
+    }
+    #result {
+      font-size: 24px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="machine">
+      <div class="slot">
+        <img src="https://t2.gstatic.com/licensed-image?q=tbn:ANd9GcR8z0k3sgTdkuu1EGX-YghXDSj_Ow0mO87pnKao3sthY1SQ2Mw_oIIqiB2sGEKWUyQM" alt="香蕉">
+      </div>
+      <div class="slot">
+        <img src="https://ihealth.bwnet.com.tw/AC_Gallery/2020/04/b201d6bd-475d-8d0b-5308-98525fcf50c2_620.jpg" alt="蘋果">
+      </div>
+      <div class="slot">
+        <img src="https://media.istockphoto.com/id/660677682/zh/%E7%85%A7%E7%89%87/%E5%9C%A8%E7%99%BD%E8%89%B2%E4%B8%8A%E5%88%86%E9%9B%A2%E7%9A%84%E7%B2%89%E7%B4%85%E8%89%B2%E8%91%A1%E8%90%84%E6%9F%9A%E6%9F%91%E6%A9%98%E9%A1%9E%E6%B0%B4%E6%9E%9C%E7%9A%84%E6%A5%94%E5%BD%A2.jpg?s=612x612&w=0&k=20&c=K_bVleODFIl4jtoVRf0ddcWXx-sW4xdQbGZU4s5L_Us=" alt="葡萄柚">
+      </div>
+      <div class="slot">
+        <img src="https://i1.momoshop.com.tw/1684818920/goodsimg/0010/217/663/10217663_O_m.webp" alt="哈密瓜">
+      </div>
+    </div>
+    <button id="spinBtn">開始抽抽樂</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const fruits = ['香蕉', '蘋果', '葡萄柚', '哈密瓜'];
+    const slots = document.querySelectorAll('.slot');
+    const spinBtn = document.getElementById('spinBtn');
+    const resultDisplay = document.getElementById('result');
+
+    let spinning = false;
+    let targetFruitIndex; // 目標水果索引
+
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * max);
+    }
+
+    // 隨機選定目標水果
+    function selectTargetFruit() {
+      targetFruitIndex = getRandomInt(fruits.length);
+    }
+
+    // 重置扭蛋機狀態
+    function resetMachine() {
+      slots.forEach((slot, index) => {
+        if (index === targetFruitIndex) {
+          slot.classList.add('selected');
+        } else {
+          slot.classList.remove('selected');
+        }
+      });
+      resultDisplay.textContent = '';
+      spinning = false;
+    }
+
+    function spin() {
+      if (spinning) return;
+
+      spinning = true;
+      resultDisplay.textContent = '開始抽抽樂...';
+
+      const rounds = 10;
+      let currentRound = 0;
+      let currentFruitIndex = 0;
+
+      selectTargetFruit(); // 隨機選定目標水果
+
+      function animateSpin() {
+        slots[currentFruitIndex].classList.remove('selected');
+        currentFruitIndex = (currentFruitIndex + 1) % slots.length;
+        slots[currentFruitIndex].classList.add('selected');
+
+        currentRound++;
+
+        if (currentRound < rounds) {
+          requestAnimationFrame(animateSpin);
+        } else {
+          setTimeout(() => {
+            resetMachine();
+            resultDisplay.textContent = `恭喜你中獎了！你抽到了 ${fruits[targetFruitIndex]}！`;
+          }, 500); // 在停止後等待一段時間顯示中獎結果
+        }
+      }
+
+      animateSpin();
+    }
+
+    spinBtn.addEventListener('click', spin);
+  </script>
+</body>
+</html>
